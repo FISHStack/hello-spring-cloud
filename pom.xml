@@ -148,21 +148,14 @@
 							</auth>
 						</from>
 						<to>
-							<image>registry.cn-hangzhou.aliyuncs.com/tianchitest/submit:hello-sc</image>
+							<image>registry.cn-hangzhou.aliyuncs.com/lyp/lanbox:v1.0</image>
 							<auth>
 								<username>${env.REGISTRY_TO_USERNAME}</username>
 								<password>${env.REGISTRY_TO_PASSWORD}</password>
 							</auth>
 						</to>
-						<!-- <extraDirectories>
-                            <paths>/jvm</paths>
-                        </extraDirectories>  -->
 						<container>
-							<!-- <args>
-                                <arg>mkdir /jvm</arg>
-                            </args> -->
 							<jvmFlags>
-								<!--默认配置2G 给docker容器配置上限内存，目前Xms和Xmx参数设置后 容器内JVM没生效-->
 								<jvmFlag>-Xms1344m</jvmFlag>
 								<jvmFlag>-Xmx1344m</jvmFlag>
 								<!-- G1最佳实践 避免显式配置Xmn 会覆盖暂停时间目标 -->
@@ -171,7 +164,6 @@
 								<jvmFlag>-XX:+DisableExplicitGC</jvmFlag>
 								<jvmFlag>-Xdebug</jvmFlag>
 								<!-- <jvmFlag>-XX:+EnableJFR</jvmFlag> -->
-
 								<!-- gc log 相关参数 -->
 								<jvmFlag>-Xloggc:/smartjvm/gc.log</jvmFlag>
 								<jvmFlag>-XX:+PrintGCDetails</jvmFlag>
@@ -205,32 +197,22 @@
 							<environment>
 								<!--添加时区-->
 								<TZ>Asia/Shanghai</TZ>
-								<!-- <spring.profiles.active>prod</spring.profiles.active> -->
 							</environment>
 							<volumes>
 								<!--镜像内创建文件夹，提供放置gc.log 如果采用tomcat运行，gc.log会在tomcat/logsM目录下生成 -->
 								<volume>/smartjvm</volume>
 							</volumes>
-							<!-- <labels>
-                                <Tz>Asia/Shanghai</Tz>
-                            </labels> -->
-							<appRoot>/usr/local/tomcat/webapps/ROOT</appRoot>
+							 <labels>
+								 <maintainer>liangyuanpengem@163.com</maintainer>
+                            </labels>
 
 							<mainClass>com.lan.example.tekton.TektonApplication</mainClass>
 							<!--使用当前时间-->
 							<useCurrentTimestamp>true</useCurrentTimestamp>
-							<!--容器在运行时暴露的端口 tomcat下运行无效 默认是tomcat的8080-->
 							<ports>
 								<port>80</port>
 							</ports>
-							<!--以下这种方式将jar包docker化也是可以-->
-							<!-- <entrypoint>
-                                <shell>sh</shell>
-                                <option>-c</option>
-                                <arg>java ${JAVA_OPTS} -cp /app/resources/:/app/classes/:/app/libs/* com.yunhorn.YdcApplication
-                                </arg>
-                            </entrypoint> -->
-							<!-- <format>OCI</format> -->
+<!--							 <format>OCI</format>-->
 						</container>
 					</configuration>
 				</plugin>
