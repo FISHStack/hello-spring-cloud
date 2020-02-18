@@ -72,12 +72,164 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>hello-sc</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib
+							</outputDirectory>
+							<includeScope>system</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.10,)
+										</versionRange>
+										<goals>
+											<goal>
+												copy-dependencies
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>com.google.cloud.tools</groupId>
+					<artifactId>jib-maven-plugin</artifactId>
+					<version>1.6.1</version>
+					<configuration>
+
+						<from>
+							<image>registry.cn-hangzhou.aliyuncs.com/dragonwell/dragonwell8:8.1.1-GA_alpine_x86_64_8u222-b67</image>
+						</from>
+						<to>
+							<image>hello-sc</image>
+						</to>
+						<!-- <extraDirectories>
+                            <paths>/jvm</paths>
+                        </extraDirectories>  -->
+						<container>
+							<!-- <args>
+                                <arg>mkdir /jvm</arg>
+                            </args> -->
+							<jvmFlags>
+								<!--默认配置2G 给docker容器配置上限内存，目前Xms和Xmx参数设置后 容器内JVM没生效-->
+								<jvmFlag>-Xms1344m</jvmFlag>
+								<jvmFlag>-Xmx1344m</jvmFlag>
+								<!-- G1最佳实践 避免显式配置Xmn 会覆盖暂停时间目标 -->
+								<!-- blog.51ctoF.com/zero01/2150696 -->
+								<!-- <jvmFlag>-Xmn256m</jvmFlag> -->
+								<jvmFlag>-XX:+DisableExplicitGC</jvmFlag>
+								<jvmFlag>-Xdebug</jvmFlag>
+								<!-- <jvmFlag>-XX:+EnableJFR</jvmFlag> -->
+
+								<!-- gc log 相关参数 -->
+								<jvmFlag>-Xloggc:/smartjvm/gc.log</jvmFlag>
+								<jvmFlag>-XX:+PrintGCDetails</jvmFlag>
+								<jvmFlag>-XX:+PrintGCDateStamps</jvmFlag>
+								<jvmFlag>-XX:+PrintHeapAtGC</jvmFlag>
+								<!--打印每次垃圾回收前,程序未中断的执行时间-->
+								<!-- <jvmFlag>-XX:+PrintGCApplicationConcurrentTime</jvmFlag> -->
+								<!--打印垃圾回收期间程序暂停的时间-->
+								<jvmFlag>-XX:+PrintGCApplicationStoppedTime</jvmFlag>
+								<!--打印每次minor GC后新的存活周期的阈值-->
+								<jvmFlag>-XX:+PrintTenuringDistribution</jvmFlag>
+
+								<jvmFlag>-XX:MaxMetaspaceSize=256M</jvmFlag>
+								<jvmFlag>-XX:MetaspaceSize=256M</jvmFlag>
+								<jvmFlag>-XX:+UseG1GC</jvmFlag>
+								<!--每次年轻代垃圾回收的最长时间(最大暂停时间)-->
+								<jvmFlag>-XX:MaxGCPauseMillis=100</jvmFlag>
+								<jvmFlag>-XX:+ParallelRefProcEnabled</jvmFlag>
+								<jvmFlag>-XX:ErrorFile=/smartjvm/hs_err.log</jvmFlag>
+
+								<jvmFlag>-XX:+UnlockExperimentalVMOptions</jvmFlag>
+								<jvmFlag>-XX:+UseCGroupMemoryLimitForHeap</jvmFlag>
+
+								<jvmFlag>-XX:HeapDumpPath=/smartjvm</jvmFlag>
+								<jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
+								<jvmFlag>-XX:+PrintClassHistogramBeforeFullGC</jvmFlag>
+								<jvmFlag>-XX:+PrintClassHistogramAfterFullGC</jvmFlag>
+								<!--启动时打印JVM参数-->
+								<jvmFlag>-XX:+PrintCommandLineFlags</jvmFlag>
+							</jvmFlags>
+							<environment>
+								<!--添加时区-->
+								<TZ>Asia/Shanghai</TZ>
+								<!-- <spring.profiles.active>prod</spring.profiles.active> -->
+							</environment>
+							<volumes>
+								<!--镜像内创建文件夹，提供放置gc.log 如果采用tomcat运行，gc.log会在tomcat/logsM目录下生成 -->
+								<volume>/smartjvm</volume>
+							</volumes>
+							<!-- <labels>
+                                <Tz>Asia/Shanghai</Tz>
+                            </labels> -->
+							<appRoot>/usr/local/tomcat/webapps/ROOT</appRoot>
+
+							<mainClass>com.lan.example.tekton.TektonApplication</mainClass>
+							<!--使用当前时间-->
+							<useCurrentTimestamp>true</useCurrentTimestamp>
+							<!--容器在运行时暴露的端口 tomcat下运行无效 默认是tomcat的8080-->
+							<ports>
+								<port>80</port>
+							</ports>
+							<!--以下这种方式将jar包docker化也是可以-->
+							<!-- <entrypoint>
+                                <shell>sh</shell>
+                                <option>-c</option>
+                                <arg>java ${JAVA_OPTS} -cp /app/resources/:/app/classes/:/app/libs/* com.yunhorn.YdcApplication
+                                </arg>
+                            </entrypoint> -->
+							<!-- <format>OCI</format> -->
+						</container>
+					</configuration>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
