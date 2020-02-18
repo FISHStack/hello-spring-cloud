@@ -142,8 +142,10 @@
 					<configuration>
 						<from>
 							<image>registry.cn-hangzhou.aliyuncs.com/dragonwell/dragonwell8:8.1.1-GA_alpine_x86_64_8u222-b67</image>
-							<username>${env.REGISTRY_FROM_USERNAME}</username>
-							<password>${env.REGISTRY_FROM_PASSWORD}</password>
+							<auth>
+								<username>${env.REGISTRY_FROM_USERNAME}</username>
+								<password>${env.REGISTRY_FROM_PASSWORD}</password>
+							</auth>
 						</from>
 						<to>
 							<image>registry.cn-hangzhou.aliyuncs.com/tianchitest/submit:hello-sc</image>
