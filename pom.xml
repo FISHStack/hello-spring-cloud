@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.4.RELEASE</version>
+		<version>2.3.7.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.lan.example</groupId>
@@ -20,6 +20,30 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+<!--			<version>2.2.5.RELEASE</version>-->
+		</dependency>
+
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>27.0.1-jre</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -74,6 +98,31 @@
 	<build>
 		<finalName>hello-sc</finalName>
 		<plugins>
+
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>1.6.1</version>
+				<configuration>
+					<from>
+						<image>registry.cn-shenzhen.aliyuncs.com/smartoilets/dragonwell8:8.4.4-GA_alpine_x86_64_8u262-b10_slim_curl</image>
+					</from>
+					<to>
+						<image>registry.cn-shenzhen.aliyuncs.com/lan-k8s/printer:v1</image>
+					</to>
+					<container>
+						<environment>
+							<!--添加时区-->
+							<TZ>Asia/Shanghai</TZ>
+						</environment>
+						<appRoot>/usr/local/lan/webapps/ROOT</appRoot>
+						<mainClass>com.lan.example.tekton.Application</mainClass>
+						<!--使用当前时间-->
+						<useCurrentTimestamp>true</useCurrentTimestamp>
+					</container>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -206,7 +255,7 @@
 								 <maintainer>liangyuanpengem@163.com</maintainer>
                             </labels>
 
-							<mainClass>com.lan.example.tekton.TektonApplication</mainClass>
+							<mainClass>com.lan.example.tekton.Application</mainClass>
 							<!--使用当前时间-->
 							<useCurrentTimestamp>true</useCurrentTimestamp>
 							<ports>

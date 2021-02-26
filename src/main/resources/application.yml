@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: hello
+    version: v1
+    write: true
+
+management:
+  health:
+    probes:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      port: ${server.port}
+      ip: ${spring.cloud.client.ip-address}
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    health:
+      show-details: always
+    probes:
+      enabled: true
