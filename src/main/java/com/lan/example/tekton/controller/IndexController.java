@@ -1,5 +1,6 @@
 package com.lan.example.tekton.controller;
 
+import com.lan.example.tekton.common.ApplicationReadyEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.availability.ApplicationAvailability;
 import org.springframework.boot.availability.AvailabilityChangeEvent;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Classname IndexController
@@ -35,6 +37,11 @@ public class IndexController {
 
     @Value("${spring.cloud.client.ip-address}")
     private String ip;
+
+    @RequestMapping(value="/startup")
+    public String startup(){
+        return "working "+(System.currentTimeMillis()-ApplicationReadyEventListener.starttime)/1000+"s";
+    }
 
     @RequestMapping(value="/version")
     public String version(){

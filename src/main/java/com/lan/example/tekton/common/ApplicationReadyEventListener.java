@@ -19,8 +19,11 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
     @Value("${spring.application.write}")
     private boolean write;
 
+    public static long starttime;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
+        starttime = System.currentTimeMillis();
         if (write) {
             CompletableFuture.runAsync(() -> {
                 Map map = Maps.newHashMap();

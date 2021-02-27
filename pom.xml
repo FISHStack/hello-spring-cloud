@@ -6,6 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.3.7.RELEASE</version>
+<!--		<version>2.4.0</version>-->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.lan.example</groupId>
@@ -108,7 +109,7 @@
 						<image>registry.cn-shenzhen.aliyuncs.com/smartoilets/dragonwell8:8.4.4-GA_alpine_x86_64_8u262-b10_slim_curl</image>
 					</from>
 					<to>
-						<image>registry.cn-shenzhen.aliyuncs.com/lan-k8s/printer:v1</image>
+						<image>registry.cn-shenzhen.aliyuncs.com/lan-k8s/printer:v2</image>
 					</to>
 					<container>
 						<environment>
